@@ -6,7 +6,7 @@ months = ['January','February','March','April','May','June',
 
 count = 0
 for stri in dates:
-    count +1
+    count ++1
     if stri=='-1':
         break
 
@@ -30,7 +30,7 @@ for stri in dates:
                     file2.close()
                 else:
                     file3 = open('parsedDates.txt','w')
-                    file3.write("ans \n")
+                    file3.write(ans)
                     file3.close()
                 break
 
