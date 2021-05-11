@@ -1,20 +1,19 @@
-# Amaan Muhammad
-# PSID: 1607608
-
 import csv
 from datetime import datetime
 
 
 class OutputInventory:
     # Class for methods used to create output inventory files from provided input
+    # Files created under the root directory.
     def __init__(self, item_list):
         self.item_list = item_list
 
-    def fullinventory(self):
-        # Create a csv file that outputs the full inventory
-        # Each row should contain item ID,
-        # manufacturer name, item type, price, service date, and list if it is damaged. The item
-        # attributes must appear in this order.
+    def full(self):
+        # Creates a csv output file for the entire inventory.
+        # - items are sorted alphabetically by manufacturer
+        # - one item per row of the file
+        # Each item information:
+        # item ID, manufacturer name, item type, price, service date, damaged
         with open('./FullInventory.csv', 'w') as file:
             items = self.item_list
             # get order of keys to write to file based on manufacturer
@@ -28,12 +27,13 @@ class OutputInventory:
                 damaged = items[item]['damaged']
                 file.write('{},{},{},{},{},{}\n'.format(id, man_name, item_type, price, service_date, damaged))
 
-    def inventory_by_type(self):
-        # Create a csv file that outputs the items based on type
-        # there should be a file for each item
-        # type and the item type needs to be in the file name. Each row of the file should contain
-        # item ID, manufacturer name, price, service date, and list if it is damaged. The items
-        # should be sorted by their item ID.
+    def by_type(self):
+        # Creates a csv output file for items based by type (laptop, phone, tower, etc.).
+        # Each type gets its own file. Type is reflected in the name of file (LaptopInventory.csv, PhoneInventory.csv..).
+        # - items sorted by item ID
+        # - one item per row of the file
+        # Each row of the file contains the data:
+        # item ID, manufacturer name, price, service date, damaged
         items = self.item_list
         types = []
         keys = sorted(items.keys())
@@ -54,12 +54,12 @@ class OutputInventory:
                     if type == item_type:
                         file.write('{},{},{},{},{}\n'.format(id, man_name, price, service_date, damaged))
 
-    def past_service_inventory(self):
-        # Create a csv file that outputs the items which are past their service date
-        # all the items that are past the service date on the day
-        # the program is actually executed. Each row should contain: item ID, manufacturer
-        # name, item type, price, service date, and list if it is damaged. The items must appear in
-        # the order of service date from oldest to most recent.
+    def past_service(self):
+        # Creates a csv output file for items which are past the service date (expiration is date executed)
+        # - items sorted from oldest to most recent
+        # - one item per row of the file
+        # item information:
+        # item ID, manufacturer name, item type, price, service date, damaged
         items = self.item_list
         keys = sorted(items.keys(), key=lambda x: datetime.strptime(items[x]['service_date'], "%m/%d/%Y").date(),
                       reverse=True)
@@ -77,13 +77,14 @@ class OutputInventory:
                 if expired:
                     file.write('{},{},{},{},{},{}\n'.format(id, man_name, item_type, price, service_date, damaged))
 
-    def damaged_inventory(self):
-        # Create a csv file that outputs all damaged items
-        # all items that are damaged. Each row should contain : item ID,
-        # manufacturer name, item type, price, and service date. The items must appear in the
-        # order of most expensive to least expensive.
+    def damaged(self):
+        # Creates a csv output file for all items that are damaged.
+        # - items sorted from most expensive to least expensive
+        # - one item per fow of the file
+        # item information:
+        # item ID, manufacturer name, item type, price, service date
         items = self.item_list
-        # Get order of keys to write to file based on price
+        # get order of keys to write to file based on price
         keys = sorted(items.keys(), key=lambda x: items[x]['price'], reverse=True)
         with open('./DamagedInventory.csv', 'w') as file:
             for item in keys:
@@ -95,7 +96,6 @@ class OutputInventory:
                 damaged = items[item]['damaged']
                 if damaged:
                     file.write('{},{},{},{},{}\n'.format(id, man_name, item_type, price, service_date))
-
 
 
 if __name__ == '__main__':
@@ -123,11 +123,10 @@ if __name__ == '__main__':
 
     inventory = OutputInventory(items)
     # Create all the output files
-    # Calling each function to run
-    inventory.fullinventory()
-    inventory.inventory_by_type()
-    inventory.past_service_inventory()
-    inventory.damaged_inventory()
+    inventory.full()
+    inventory.by_type()
+    inventory.past_service()
+    inventory.damaged()
 
     # Get the different manufacturers and types in a list
     types = []
@@ -143,7 +142,8 @@ if __name__ == '__main__':
     # Prompt the user for input
     user_input = None
     while user_input != 'q':
-        user_input = input("\nPlease enter an item manufacturer and item type (ex: Apple laptop) or enter 'q' to quit:\n")
+        user_input = input("\nPlease enter an item manufacturer and item type (ex: Apple laptop) or enter 'q' to quit:"
+                           "\n")
         if user_input == 'q':
             break
         else:
@@ -224,9 +224,8 @@ if __name__ == '__main__':
                                 man_name = similar_items[item]['manufacturer']
                                 item_type = similar_items[item]['item_type']
                                 price = similar_items[item]['price']
-                                print("You may, also, consider: {}, {}, {}, {}\n".format(item_id, man_name, item_type, 
+                                print("You may, also, consider: {}, {}, {}, {}\n".format(item_id, man_name, item_type,
                                                                                          price))
 
                             else:
                                 print("No such item in inventory")
-
